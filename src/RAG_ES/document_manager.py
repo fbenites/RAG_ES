@@ -1,51 +1,60 @@
-from elasticsearch import Elasticsearch
-#from elasticsearch.exceptions import ElasticsearchException
 import logging
+from elasticsearch import Elasticsearch
 
-def initialize_elasticsearch(host: str = 'localhost', port: int = 9200) -> Elasticsearch:
-    """
-    Initialize an Elasticsearch client connection.
-    """
-    try:
-        es = Elasticsearch([{'host': host, 'port': port, "scheme": "http"}])
-        #if not es.ping():
-        #    raise ValueError("Connection to Elasticsearch failed. Could not ping the Elasticsearch instance.")
-        logging.info("Successfully connected to Elasticsearch")
-        return es
- #   except ElasticsearchException as es_exception:
- #       logging.error(f"Error connecting to Elasticsearch: {es_exception}", exc_info=True)
-#        raise
-    except Exception as e:
-        logging.error(f"An unexpected error occurred while initializing Elasticsearch: {e}", exc_info=True)
-        raise
 
-es = initialize_elasticsearch('localhost', 9200)
+class ESConnector:
+    """ Class for wraping the ES client, so we can
+    define interfaces to cleanly interact and monitor the singleton"""
+    # Configuration for Elasticsearch connection
 
-def store_document(text: str):
-    """
-    Store a document in Elasticsearch and return the generated document ID.
-    """
-    try:
-        response = es.index(index="documents", body={"text": text})
-        document_id = response['_id']
-        logging.info(f"Document stored successfully with ID: {document_id}")
-        return document_id
-    except Exception as e:
-        logging.error(f"Error storing document in Elasticsearch: {e}", exc_info=True)
-        raise
+    def __init__(self, host: str = 'localhost', port: int = 9200) -> Elasticsearch:
+        """
+        Initialize an Elasticsearch client connection.
+        """
+        try:
+            es = Elasticsearch([{'host': host, 'port': port, "scheme": "http"}])
+            if not es.ping():
+                raise ValueError("Connection to Elasticsearch failed. Could not" 
+                                 "ping the Elasticsearch instance.")
+            logging.info("Successfully connected to Elasticsearch")
+            self.__es__ = es
 
-def retrieve_document(document_id: str):
-    """
-    Retrieve a document from Elasticsearch using the document ID.
-    """
-    try:
-        response = es.get(index="documents", id=document_id)
-        if response['found']:
-            logging.info(f"Document retrieved successfully with ID: {document_id}")
-            return response['_source']
-        else:
-            logging.info(f"Document not found with ID: {document_id}")
-            return None
-    except Exception as e:
-        logging.error(f"Error retrieving document from Elasticsearch: {e}", exc_info=True)
-        raise
+        except Exception as e:
+            logging.error(f"An unexpected error occurred while"
+                          "initializing Elasticsearch: {e}", exc_info=True)
+            raise
+
+
+
+    def store_document(self, text: str):
+        """
+        Store a document in Elasticsearch and return the generated document ID.
+        """
+        try:
+            response = self.__es__.index(index="documents", body={"text": text})
+            document_id = response['_id']
+            logging.info(f"Document stored successfully with ID: {document_id}")
+            return document_id
+        except Exception as e:
+            logging.error(f"Error storing document in Elasticsearch: {e}", exc_info=True)
+            raise
+
+    def retrieve_document(self, document_id: str):
+        """
+        Retrieve a document from Elasticsearch using the document ID.
+        """
+        try:
+            response = self.__es__.get(index="documents", id=document_id)
+            if response['found']:
+                logging.info(f"Document retrieved successfully with ID: {document_id}")
+                return response['_source']
+            else:
+                logging.info(f"Document not found with ID: {document_id}")
+                return None
+        except Exception as e:
+            logging.error(f"Error retrieving document from Elasticsearch: {e}", exc_info=True)
+            raise
+
+    def search(self, index: str, body: dict) -> dict:
+        """ Interface for searching can be used to check parameters"""
+        return self.__es__.search(index=index, body=body)
