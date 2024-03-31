@@ -31,8 +31,8 @@ async def summarize_with_llm(documents):
 
         # Check if the tokenized input exceeds the model's max input size
         max_model_input_size = tokenizer.model_max_length
-        import pdb
-        pdb.set_trace()
+        
+        
         if len(inputs["input_ids"][0]) > max_model_input_size:
             logging.info("Input exceeds max model input size, splitting into chunks.")
             # If it does, split the input into chunks based on token count
