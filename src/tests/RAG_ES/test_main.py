@@ -1,5 +1,13 @@
 from fastapi.testclient import TestClient
-from your_app_file import app  # Import your FastAPI app
+import sys
+import os
+
+# Add the directory just above ./RAG_ES to the path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'RAG_ES')))
+
+from RAG_ES.main import app  # Import your FastAPI app
+
 import pytest
 
 client = TestClient(app)

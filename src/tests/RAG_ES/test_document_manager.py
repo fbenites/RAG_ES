@@ -1,10 +1,13 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from es_connector import ESConnector
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'RAG_ES')))
 
 
+from RAG_ES.document_manager import ESConnector
 import unittest
-from es_connector import ESConnector
 
 class TestESConnectorIntegration(unittest.TestCase):
     @classmethod
@@ -44,28 +47,28 @@ class TestESConnectorIntegration(unittest.TestCase):
 
 
 class TestESConnector(unittest.TestCase):
-    @patch('es_connector.Elasticsearch')
+    @patch('RAG_ES.document_manager.Elasticsearch')
     def test_store_document_success(self, mock_es):
         mock_es.return_value.index.return_value = {'_id': '123'}
         connector = ESConnector()
         doc_id = connector.store_document("Test document")
         self.assertEqual(doc_id, '123')
 
-    @patch('es_connector.Elasticsearch')
+    @patch('RAG_ES.document_manager.Elasticsearch')
     def test_retrieve_document_found(self, mock_es):
         mock_es.return_value.get.return_value = {'found': True, '_source': 'Test document'}
         connector = ESConnector()
         document = connector.retrieve_document("123")
         self.assertEqual(document, 'Test document')
 
-    @patch('es_connector.Elasticsearch')
+    @patch('RAG_ES.document_manager.Elasticsearch')
     def test_retrieve_document_not_found(self, mock_es):
         mock_es.return_value.get.return_value = {'found': False}
         connector = ESConnector()
         document = connector.retrieve_document("123")
         self.assertIsNone(document)
 
-    @patch('es_connector.Elasticsearch')
+    @patch('RAG_ES.document_manager.Elasticsearch')
     def test_search(self, mock_es):
         mock_es.return_value.search.return_value = {'hits': {'hits': [{'_source': 'Test document'}]}}
         connector = ESConnector()
