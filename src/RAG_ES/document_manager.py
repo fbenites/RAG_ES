@@ -6,7 +6,7 @@ class ESConnector:
     """ Class for wraping the ES client, so we can
     define interfaces to cleanly interact and monitor the singleton"""
     # Configuration for Elasticsearch connection
-
+    
     def __init__(self, host: str = 'localhost', port: int = 9200) -> Elasticsearch:
         """
         Initialize an Elasticsearch client connection.
@@ -55,6 +55,10 @@ class ESConnector:
             logging.error(f"Error retrieving document from Elasticsearch: {e}", exc_info=True)
             raise
 
-    def search(self, index: str, body: dict) -> dict:
+    def search(self, body: dict, index: str = None) -> dict:
         """ Interface for searching can be used to check parameters"""
-        return self.__es__.search(index=index, body=body)
+        if index == None:
+            self.__es__.search( body=body)
+        else:
+            return self.__es__.search(index=index, body=body)
+
