@@ -25,8 +25,8 @@ The service is engineered using Python, with FastAPI as the web framework for it
 
 ### Quickstart
 
-1. Ensure Python 3.9 and pip are installed on your system.
-2. Install the required dependencies using `pip install -r requirements.txt`.
+1. Ensure Python 3.9 (3.10) and pip are installed on your system.
+2. Install the required dependencies using `pip install -r requirements.txt` (virtual enviroment `venv`).
 3. Confirm that Elasticsearch is running and accessible.
 4. Launch the FastAPI application with `uvicorn main:app --host 0.0.0.0 --port 8000`.
 5. Interact with the application through the `/documents` endpoint for storing and retrieving documents, and the `/search` endpoint for document search functionality.
