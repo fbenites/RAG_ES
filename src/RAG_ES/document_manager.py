@@ -18,6 +18,7 @@ class ESConnector:
                                  "ping the Elasticsearch instance.")
             logging.info("Successfully connected to Elasticsearch")
             self.__es__ = es
+            self.__index__ = "documents"
 
         except Exception as e:
             logging.error(f"An unexpected error occurred while"
@@ -31,7 +32,7 @@ class ESConnector:
         Store a document in Elasticsearch and return the generated document ID.
         """
         try:
-            response = self.__es__.index(index="documents", body={"text": text})
+            response = self.__es__.index(index=self.__index__, body={"text": text})
             document_id = response['_id']
             logging.info(f"Document stored successfully with ID: {document_id}")
             return document_id
@@ -44,7 +45,7 @@ class ESConnector:
         Retrieve a document from Elasticsearch using the document ID.
         """
         try:
-            response = self.__es__.get(index="documents", id=document_id)
+            response = self.__es__.get(index=self.__index__, id=document_id)
             if response['found']:
                 logging.info(f"Document retrieved successfully with ID: {document_id}")
                 return response['_source']
@@ -58,7 +59,7 @@ class ESConnector:
     def search(self, body: dict, index: str = None) -> dict:
         """ Interface for searching can be used to check parameters"""
         if index == None:
-            self.__es__.search( body=body)
+            return self.__es__.search(body)
         else:
             return self.__es__.search(index=index, body=body)
 

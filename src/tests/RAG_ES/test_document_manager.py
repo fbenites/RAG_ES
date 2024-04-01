@@ -39,7 +39,7 @@ class TestESConnectorIntegration(unittest.TestCase):
         self.connector.store_document(doc_text)
 
         # Search for the document
-        search_response = self.connector.search(self.test_index, {"match": {"text": "Unique search"}})
+        search_response = self.connector.search({"query": {"match": {"text": "Unique search"}}})
         hits = search_response['hits']['hits']
         self.assertGreater(len(hits), 0, "No documents found")
         self.assertIn(doc_text, [hit['_source']['text'] for hit in hits], "Stored document was not found by search")
@@ -73,7 +73,8 @@ class TestESConnector(unittest.TestCase):
         mock_es.return_value.search.return_value = {'hits': {'hits': [{'_source': 'Test document'}]}}
         connector = ESConnector()
         results = connector.search("Test")
-        self.assertEqual(results, {'hits': {'hits': [{'_source': 'Test document'}]}})
+        print(results)
+        self.assertEqual(results['hits']['hits'][0]['_source'], 'Test document')
 
 if __name__ == '__main__':
     unittest.main()
