@@ -1,6 +1,11 @@
 import unittest
 import asyncio
-from your_script_name import summarize_with_llm  # Import the function from your script
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'RAG_ES')))
+
+from RAG_ES.llm_summarizer import summarize_with_llm  # Import the function from your script
 
 class SummarizationTest(unittest.TestCase):
     def setUp(self):
